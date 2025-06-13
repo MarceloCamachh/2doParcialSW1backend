@@ -46,19 +46,17 @@ import {
   
     @SubscribeMessage('element:update')
     handleElementUpdate(
-    @MessageBody() data: { roomId: string; frame: any },
-    @ConnectedSocket() client: Socket,
+      @MessageBody() data: { roomId: string; frame: any; clientId: string },
+      @ConnectedSocket() client: Socket,
     ) {
-    console.log("Update recibido:", data);
-    client.broadcast.to(data.roomId).emit('element:update', {
-        roomId: data.roomId,
+      console.log("Update recibido:", data);
+
+      this.server.to(data.roomId).emit('element:update', {
         frame: data.frame,
-    });
-    client.emit('element:update', {
-        roomId: data.roomId,
-        frame: data.frame,
-    });
+        clientId: data.clientId, // ✅ reenviamos el ID del remitente
+      });
     }
+
   
     @SubscribeMessage('element:add')
 handleElementAdd(
